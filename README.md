@@ -1,5 +1,5 @@
 # mapzer
-[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)![Vercel](https://vercelbadge.vercel.app/api/linuxfandudeguy/mapzer)
 > The API I used for geoencoding rate limits one request per 1 second please follow the rate limits, also you have to put in a region name, not specific coordinates.
 
 A weather map where you are able to put in the name of a region, and then get the weather for that region.

@@ -1,5 +1,5 @@
 # mapzer
-
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 > The API I used for geoencoding rate limits one request per 1 second please follow the rate limits, also you have to put in a region name, not specific coordinates.
 
 A weather map where you are able to put in the name of a region, and then get the weather for that region.
@@ -14,4 +14,4 @@ The creator of leaflet is a Ukrainian citizen.
 
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
-![Screenshot 2024-11-06 7 20 00 PM](https://github.com/user-attachments/assets/017c6a7d-4050-48e8-b1b6-2ca6f9c6f9bd)
+![Screenshot 2024-11-06 7 27 25 PM](https://github.com/user-attachments/assets/6446043b-d87d-4565-b7d1-9004fb9ec986)

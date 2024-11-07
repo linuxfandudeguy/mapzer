@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Map</title>
+    <link href="./leaflet.css" rel="stylesheet" />
+    <link href="./node_modules/@fontsource/roboto/index.css" rel="stylesheet" />
+    <script src="./tw.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #map {
+            height: 100vh;
+        }
+
+        .weather-info {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Search Bar and Button -->
+    <div class="flex items-center bg-white bottom-10 fixed h-10 left-5 overflow-hidden rounded-full shadow-lg w-64 z-[10000]">
+        <input class="h-full border-none flex-grow focus:outline-none px-4 text-sm" id="search-bar" placeholder="Enter city name">
+        <button class="flex items-center bg-blue-500 h-full hover:bg-blue-600 justify-center text-white w-10" id="path-button" onclick="searchWeather()">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21l-4.35-4.35m-1.45 2.36a8.5 8.5 0 111.414-1.414L21 21z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <div id="weather-info" class="weather-info">
+        <h3 id="weather-location" class="font-semibold text-center"></h3>
+        <p id="weather-today" class="text-center"></p>
+        <p id="weather-forecast" class="text-center"></p>
+    </div>
+
+    <script src="./leaflet.js"></script>
+
+    <script>
+        let map, marker;
+
+        // Initialize the map with the user's geolocation
+        function initMap(lat, lon) {
+            map = L.map('map').setView([lat, lon], 13);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19,
+                attribution: "© OpenStreetMap contributors"
+            }).addTo(map);
+
+            marker = L.marker([lat, lon]).addTo(map).bindPopup("You are here").openPopup();
+        }
+
+        // Search for weather using region name
+        function searchWeather() {
+            const input = document.getElementById("search-bar").value.trim();
+
+            if (input) {
+                // Get coordinates using Nominatim for the entered region name
+                getCoordinates(input)
+                    .then(coords => {
+                        // Once coordinates are fetched, display weather data
+                        showWeather(coords.lat, coords.lon, input);
+                    })
+                    .catch(() => alert("Location not found."));
+            } else {
+                alert("Please enter a region name.");
+            }
+        }
+
+        // Fetch coordinates for a given region name using Nominatim API
+        async function getCoordinates(regionName) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(regionName)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.length > 0) {
+                return {
+                    lat: parseFloat(data[0].lat),
+                    lon: parseFloat(data[0].lon)
+                };
+            } else {
+                throw new Error("Location not found");
+            }
+        }
+
+        // Fetch and display weather data from your API using the CORS proxy
+        function showWeather(lat, lon, regionName) {
+            const weatherUrl = `https://uncors.vercel.app/?url=https://weather-api-one-neon.vercel.app/weather/${regionName.toLowerCase()}?unit=c`;
+
+            fetch(weatherUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    const weather = data[0]; // Using the first forecast data (current day)
+                    const temperature = `${weather.low}°C - ${weather.high}°C`;
+                    const description = weather.skytextday;
+
+                    // Update the weather display
+                    document.getElementById("weather-location").textContent = `Weather in ${regionName.charAt(0).toUpperCase() + regionName.slice(1)}`;
+                    document.getElementById("weather-today").textContent = `Today: ${weather.day} - ${description}`;
+                    document.getElementById("weather-forecast").textContent = `High/Low: ${temperature}`;
+
+                    // Show the weather information
+                    document.getElementById("weather-info").style.display = "block";
+
+                    // Update map with the new location
+                    map.setView([lat, lon], 13);
+                    marker.setLatLng([lat, lon]).bindPopup(`${description}, ${temperature}`).openPopup();
+                })
+                .catch(() => alert("Failed to fetch weather data."));
+        }
+
+        // Initialize the map with the user's geolocation
+        navigator.geolocation ? navigator.geolocation.getCurrentPosition((position) => {
+            initMap(position.coords.latitude, position.coords.longitude);
+        }, () => initMap(51.5074, -0.1278)) : initMap(51.5074, -0.1278);  // Default to London if geolocation fails
+    </script>
+</body>
+
+</html>
